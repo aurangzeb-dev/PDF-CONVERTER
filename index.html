@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image to PDF Converter</title>
+    <title>PNG to PDF Converter</title>
     <link rel="stylesheet" href="pdf.css">
 </head>
 <body>
     <div class="container">
         <h1>PNG to PDF Converter</h1>
-        <div class="file-upload">
-            <input type="file" id="fileInput" multiple accept="image/*" onchange="updateFileList()" />
-            <label for="fileInput" class="custom-file-upload">Choose Images</label>
-            <div id="fileList">No files chosen</div>
-        </div>
-        <button onclick="generatePDF()">Download PDF</button>
+        <label for="imageInput" class="custom-file-upload">choose file</label>
+        <input type="file" id="imageInput" accept="image/png, image/jpeg" multiple>
+        <br>
+        <p id="fileNames">No files chosen</p>
+        <button id="convertBtn" >convert</button>
     </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="pdf.js"></script>
 </body>

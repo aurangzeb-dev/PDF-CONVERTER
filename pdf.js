@@ -1,54 +1,43 @@
-function updateFileList() {
-    const input = document.getElementById('fileInput');
-    const fileList = document.getElementById('fileList');
-    const files = input.files;
-    if (files.length === 0) {
-        fileList.textContent = 'No files chosen';
-    } else {
-        fileList.textContent = '';
-        for (let i = 0; i < files.length; i++) {
-            fileList.textContent += files[i].name + (i < files.length - 1 ? ', ' : '');
-        }
-    }
-}
+const { jsPDF } = window.jspdf;
+const imageInput = document.getElementById('imageInput');
+const fileNames = document.getElementById('fileNames');
+const convertBtn = document.getElementById('convertBtn');
+const downloadBtn = document.getElementById('downloadBtn');
 
-function generatePDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const input = document.getElementById('fileInput');
-    const files = input.files;
+let images = [];
 
-    if (files.length === 0) {
-        alert('No files chosen');
-        return;
-    }
+imageInput.addEventListener('change', function() {
+    images = Array.from(imageInput.files);
+    fileNames.textContent = images.map(file => file.name).join(', ') || 'No files chosen';
+    downloadBtn.disabled = images.length === 0;
+});
 
-    let promises = [];
-    for (let i = 0; i < files.length; i++) {
-        promises.push(new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = function() {
-                    doc.addImage(img, 'JPEG', 10, 10, img.width / 4, img.height / 4);
-                    if (i < files.length - 1) {
-                        doc.addPage();
-                    }
-                    resolve();
-                };
-            };
-            reader.onerror = function(event) {
-                reject('Error reading file: ' + event.target.error.code);
-            };
-            reader.readAsDataURL(files[i]);
-        }));
-    }
+convertBtn.addEventListener('click', function() {
+    if (images.length > 0) {
+        const pdf = new jsPDF('portrait', 'mm', 'a4');
+        images.forEach((image, index) => {
+            const img = new Image();
+            img.src = URL.createObjectURL(image);
+            img.onload = function() {
+                const imgWidth = pdf.internal.pageSize.getWidth();
+                const imgHeight = img.naturalHeight * imgWidth / img.naturalWidth;
 
-    Promise.all(promises).then(() => {
-        doc.save('converted.pdf');
-    }).catch(error => {
-        alert(error);
-    });
-}
+                if (imgHeight > pdf.internal.pageSize.getHeight()) {
+                    const imgHeightScaled = pdf.internal.pageSize.getHeight();
+                    const imgWidthScaled = imgHeightScaled * img.naturalWidth / img.naturalHeight;
+                    pdf.addImage(img, 'PNG', (imgWidth - imgWidthScaled) / 2, 0, imgWidthScaled, imgHeightScaled);
+                } else {
+                    pdf.addImage(img, 'PNG', 0, (pdf.internal.pageSize.getHeight() - imgHeight) / 2, imgWidth, imgHeight);
+                }
+
+                if (index < images.length - 1) {
+                    pdf.addPage();
+                } else {
+                    pdf.save('download.pdf');
+                }
+            }
+        });
+    }
+});
+
 

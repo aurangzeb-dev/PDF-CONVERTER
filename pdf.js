@@ -32,12 +32,16 @@ convertBtn.addEventListener('click', function() {
 
                 if (index < images.length - 1) {
                     pdf.addPage();
-                } else {
-                    pdf.save('download.pdf');
+                } 
+                    resolve();
                 }
-            }
-        });
-    }
+            });
+        });
+
+        Promise.all(imagePromises).then(() => {
+            pdf.save('download.pdf');
+        });
+    }
 });
 
 

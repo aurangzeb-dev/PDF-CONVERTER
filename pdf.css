@@ -81,7 +81,7 @@ body {
     font-weight: bold;
 }
 #convertBtn{
-    background-color: #38f151;
+    background-color: #002cf0;
     padding: 10px 20px;
     color: #ffffff;
     border: none;
@@ -91,7 +91,7 @@ body {
     margin-bottom: 10px;
 }
 #convertBtn:hover{
-    background-color: #58ff6e;
+    background-color: #4b6cff;
 }
 #imageInput{
     display: none;

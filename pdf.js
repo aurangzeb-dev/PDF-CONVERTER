@@ -32,7 +32,7 @@ convertBtn.addEventListener('click', function() {
 
                 if (index < images.length - 1) {
                     pdf.addPage();
-                }  else {
+                } else {
                     pdf.save('download.pdf');
                 }
             }
